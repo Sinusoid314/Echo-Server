@@ -1,2 +1,7 @@
-# Echo-Server
-Server program that echoes received data back to the sender.
+Requires the following code:
+
+https://github.com/Sinusoid314/WinGUI.git
+
+https://github.com/Sinusoid314/WinSocket.git
+
+https://github.com/Sinusoid314/String-Extension.git
