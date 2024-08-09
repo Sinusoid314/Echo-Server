@@ -1,0 +1,42 @@
+# Project: EchoServer
+# Makefile created by Dev-C++ 5.4.0
+
+CPP      = g++.exe
+CC       = gcc.exe
+WINDRES  = windres.exe
+RES      = ./obj/EchoServer_private.res
+OBJ      = ./obj/stringExt.o ./obj/Socket.o ./obj/WinGUI.o ./obj/EchoServer.o $(RES)
+LINKOBJ  = ./obj/stringExt.o ./obj/Socket.o ./obj/WinGUI.o ./obj/EchoServer.o $(RES)
+LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib" -static-libstdc++ -static-libgcc -mwindows "../../../../Program Files (x86)/Dev-Cpp/MinGW32/lib/libws2_32.a" "../../../../Program Files (x86)/Dev-Cpp/MinGW32/lib/libcomctl32.a" "../../../../Program Files (x86)/Dev-Cpp/MinGW32/lib/libgdi32.a" 
+INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include"
+CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include"
+BIN      = build/EchoServer.exe
+CXXFLAGS = $(CXXINCS) 
+CFLAGS   = $(INCS) 
+RM       = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS)
+
+./obj/stringExt.o: ../[Libraries]/String\ Extension/stringExt.cpp
+	$(CPP) -c "../[Libraries]/String Extension/stringExt.cpp" -o ./obj/stringExt.o $(CXXFLAGS)
+
+./obj/Socket.o: ../[Libraries]/WinSocket/Socket.cpp
+	$(CPP) -c ../[Libraries]/WinSocket/Socket.cpp -o ./obj/Socket.o $(CXXFLAGS)
+
+./obj/WinGUI.o: ../[Libraries]/WinGUI/WinGUI.cpp
+	$(CPP) -c ../[Libraries]/WinGUI/WinGUI.cpp -o ./obj/WinGUI.o $(CXXFLAGS)
+
+./obj/EchoServer.o: source/EchoServer.cpp
+	$(CPP) -c source/EchoServer.cpp -o ./obj/EchoServer.o $(CXXFLAGS)
+
+./obj/EchoServer_private.res: EchoServer_private.rc 
+	$(WINDRES) -i EchoServer_private.rc --input-format=rc -o ./obj/EchoServer_private.res -O coff 
