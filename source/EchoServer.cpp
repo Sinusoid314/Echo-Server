@@ -38,10 +38,11 @@ bool ServerSetup(void)
     serverWin.Create("Echo Server", wndLeft, wndTop, wndWidth, wndHeight, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN);
     portLabel.Create(&serverWin, "Port:", 15, 15, 35, 20, WS_VISIBLE | WS_CHILD);
     portEdit.Create(&serverWin, "", 50, 15, 70, 20, WS_VISIBLE | WS_CHILD | ES_AUTOHSCROLL, WS_EX_CLIENTEDGE);
-    listenBtn.Create(&serverWin, "Listen", 150, 10, 85, 30, WS_VISIBLE | WS_CHILD);
-    disconnectBtn.Create(&serverWin, "Disconnect", 250, 10, 85, 30, WS_VISIBLE | WS_CHILD | WS_DISABLED);    
-    statusLabel.Create(&serverWin, "Status:", 385, 15, 50, 20, WS_VISIBLE | WS_CHILD);
-    statusBox.Create(&serverWin, "Disconnected", 440, 15, 120, 20, WS_VISIBLE | WS_CHILD, WS_EX_STATICEDGE);
+    listenBtn.Create(&serverWin, "Listen", 130, 10, 85, 30, WS_VISIBLE | WS_CHILD);
+    disconnectBtn.Create(&serverWin, "Disconnect", 220, 10, 85, 30, WS_VISIBLE | WS_CHILD | WS_DISABLED);    
+    statusLabel.Create(&serverWin, "Status:", 345, 15, 50, 20, WS_VISIBLE | WS_CHILD);
+    statusBox.Create(&serverWin, "Disconnected", 400, 15, 120, 20, WS_VISIBLE | WS_CHILD, WS_EX_STATICEDGE);
+    clearBtn.Create(&serverWin, "Clear Display", 560, 10, 100, 30, WS_VISIBLE|WS_CHILD);
     dispBox.Create(&serverWin, "", 0, 50, 0, 0,
                               WS_VISIBLE|WS_CHILD|WS_BORDER|
                               WS_VSCROLL|WS_HSCROLL|ES_READONLY|
@@ -51,8 +52,15 @@ bool ServerSetup(void)
     //Set window events
     serverWin.AddEvent(WM_CLOSE, ServerWin_OnClose, WINEVENT_MESSAGE);
     serverWin.AddEvent(WM_SIZE, ServerWin_OnSize, WINEVENT_MESSAGE);
+    serverWin.AddEvent(WM_CTLCOLORSTATIC, ServerWin_OnCtlColorStatic, WINEVENT_MESSAGE);
     listenBtn.AddEvent(BN_CLICKED, ListenBtn_OnClick, WINEVENT_COMMAND);
     disconnectBtn.AddEvent(BN_CLICKED, DisconnectBtn_OnClick, WINEVENT_COMMAND);
+    clearBtn.AddEvent(BN_CLICKED, ClearBtn_OnClick, WINEVENT_COMMAND);
+    
+    //Set display colors
+    dispBkColor = RGB(0,0,90);
+    dispTextColor = RGB(255,255,255);
+    dispBkColorBrush = CreateSolidBrush(dispBkColor);
     
     return true;
 }
@@ -71,6 +79,9 @@ void ServerCleanup(void)
     
     //Cleanup socket support
     SocketCleanup();
+    
+    //Cleanup display color brush
+    DeleteObject(dispBkColorBrush);
 }
 
 int WINAPI WinMain (HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -110,6 +121,24 @@ LRESULT ServerWin_OnSize(CWindow* winPtr, const CWinEvent& eventObj)
     return 0;
 }
 
+LRESULT ServerWin_OnCtlColorStatic(CWindow* winPtr, const CWinEvent& eventObj)
+//
+{
+    HDC hdc = (HDC) eventObj.wParam;
+    HWND hwnd = (HWND) eventObj.lParam;
+    
+    if(hwnd == dispBox.winHandle)
+    {
+    	SetBkColor(hdc, dispBkColor);
+	    SetTextColor(hdc, dispTextColor);
+        return (LRESULT)dispBkColorBrush;
+    }
+    else
+    {
+    	return DefWindowProc(winPtr->winHandle, WM_CTLCOLORSTATIC, eventObj.wParam, eventObj.lParam);
+    }
+}
+
 LRESULT ListenBtn_OnClick(CWindow* btnPtr, const CWinEvent& eventObj)
 //Listen for a connection on the given port
 {
@@ -143,6 +172,12 @@ LRESULT DisconnectBtn_OnClick(CWindow* btnPtr, const CWinEvent& eventObj)
     
     UpdateUI();
     return 0;
+}
+
+LRESULT ClearBtn_OnClick(CWindow* winPtr, const CWinEvent& eventObj)
+//
+{
+    dispBox.SetText("");
 }
 
 void Socket_OnConnectionRequest(CSocket* socketPtr, const CSocketEvent& eventObj)

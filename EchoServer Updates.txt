@@ -1,2 +1,3 @@
-()
-	- 
+(August 10, 2024)
+	- Added 'Clear Display' button.
+	- Modified color scheme of display text box to white-on-dark-blue.

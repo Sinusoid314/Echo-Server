@@ -13,7 +13,12 @@ CButton listenBtn;
 CButton disconnectBtn;
 CEditBox portEdit;
 CLabel portLabel;
+CButton clearBtn;
 CSocket* serverSocketPtr = NULL;
+
+COLORREF dispBkColor;
+COLORREF dispTextColor;
+HBRUSH dispBkColorBrush;
 
 bool ServerSetup(void);
 void ServerCleanup(void);
@@ -21,8 +26,10 @@ int WINAPI WinMain (HINSTANCE, HINSTANCE, LPSTR, int);
 
 LRESULT ServerWin_OnClose(CWindow*, const CWinEvent&);
 LRESULT ServerWin_OnSize(CWindow*, const CWinEvent&);
+LRESULT ServerWin_OnCtlColorStatic(CWindow*, const CWinEvent&);
 LRESULT ListenBtn_OnClick(CWindow*, const CWinEvent&);
 LRESULT DisconnectBtn_OnClick(CWindow*, const CWinEvent&);
+LRESULT ClearBtn_OnClick(CWindow*, const CWinEvent&);
 
 void Socket_OnConnectionRequest(CSocket*, const CSocketEvent&);
 void Socket_OnDisconnect(CSocket*, const CSocketEvent&);
